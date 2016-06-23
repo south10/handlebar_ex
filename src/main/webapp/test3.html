@@ -1,0 +1,65 @@
+<html>
+<meta charset="UTF-8"/>
+<head>
+    <title>handlebar_ex</title>
+    <script src="/webjars/jQuery/2.1.3/dist/jquery.min.js"></script>
+    <script src="/webjars/handlebars/4.0.5/handlebars.min.js"></script>
+</head>
+<body>
+</body>
+</html>
+<script id="entry-template" type="text/x-handlebars-template">
+    <table>
+        <thead>
+        <th>이름</th>
+        <th>아이디</th>
+        <th>취미</th>
+        </thead>
+        <tbody>
+            {{!-- {{#each users}}는 {{#users}}로도 대체 가능하다 --}}
+            {{#each users as |user userId|}}
+                <tr>
+                    <td>{{name}}</td>
+                    <td>{{id}}</td>
+                    <td>
+                        {{#each hobbys as |hobby hobbyId|}}
+                        {{!-- 처음이 아닌 경우에는 쉼표(,) 넣기 --}}
+                        {{#unless @first}}, {{/unless}}
+
+                        {{!-- 상위 이터레이션의 인덱스 넘버를 가져올 때 --}}
+                        {{@../index}} == {{userId}}
+
+                        {{#with ../this.name as |myName|}}
+                            {{myName}} 의 {{hobbyId}}번 취미 {{hobby}}
+                        {{/with}}
+                        {{/each}}
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</script>
+<script>
+    //핸들바 템플릿 가져오기
+    var source = $("#entry-template").html();
+
+    //핸들바 템플릿 컴파일
+    var template = Handlebars.compile(source);
+
+    //핸들바 템플릿에 바인딩할 데이터
+    var data = {
+        users: [
+            { name: "홍길동", id: "aaa", hobbys: ['축구', '야구', '농구'] },
+            { name: "이순신", id: "bbb", hobbys: ['족구', '피구', '탁구'] },
+            { name: "이성계", id: "ccc", hobbys: ['수구', '배구', '농구'] },
+            { name: "장영실", id: "ddd", hobbys: ['축구', '피구', '농구'] },
+            { name: "장보고", id: "eee", hobbys: ['배구', '야구', '족구'] }
+        ]
+    };
+
+    //핸들바 템플릿에 데이터를 바인딩해서 HTML 생성
+    var html = template(data);
+
+    //생성된 HTML을 DOM에 주입
+    $('body').append(html);
+</script>

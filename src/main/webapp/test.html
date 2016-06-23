@@ -1,0 +1,116 @@
+<html>
+<head>
+    <title>handlebar_ex</title>
+    <script src="/webjars/jQuery/2.1.3/dist/jquery.min.js"></script>
+    <script src="/webjars/handlebars/4.0.5/handlebars.min.js"></script>
+</head>
+<body>
+
+<div class="content-placeholder"></div>
+<div class="content-placeholder2"></div>
+</body>
+</html>
+<script id="built-in-helpers-template" type="text/x-handlebars-template">
+    {{#each animals}}
+    <p>
+        The {{capitalize this.name}} says
+        {{#if this.noise}}
+        "{{this.noise}}".
+        {{else}}
+        nothing since its a {{this.name}}.
+        {{/if}}
+    </p>
+    {{/each}}
+</script>
+<script id="block-expressions-template" type="text/x-handlebars-template">
+
+    <p> The <b> {{#uppercase}} konami {{/uppercase}} </b> Code is a cheat code that appears in many video games.</p>
+
+    <p>During the title screen before the game demo begins, the player could press the following sequence of buttons on the game controller to enable the cheat:</p>
+
+    <p>{{#uppercase}}{{code}}{{/uppercase}}</p>
+
+    <p>The code is also present as an Easter egg on a number of websites.</p>
+
+</script>
+<script>
+    $(function () {
+        compile1();
+        compile2();
+        function compile2(){
+            // Grab the template script
+            var theTemplateScript = $("#block-expressions-template").html();
+
+            // This is our block helper
+            // The name of our helper is provided as the first parameter - in this case 'uppercase'
+            Handlebars.registerHelper('uppercase', function(options) {
+
+                // "this" is the context that existed when calling the helper.
+
+                // The options object has a special function - fn. This is a
+                // compiled version of the template that is contained between the opening and closing
+                // blocks of this helper. To get a string, call fn with the context:
+
+                return options.fn(this).toUpperCase();
+
+            });
+
+            // Compile the template
+            var theTemplate = Handlebars.compile(theTemplateScript);
+
+            // Define our data object
+            var context = {
+                "code": "up up down down left right left right b a select start"
+            };
+
+            // Pass our data to the template
+            var theCompiledHtml = theTemplate(context);
+
+            // Add the compiled html to the page
+            $('.content-placeholder2').html(theCompiledHtml);
+        }
+        function compile1(){
+            // Register a helper
+            Handlebars.registerHelper('capitalize', function(str){
+                // str is the argument passed to the helper when called
+                str = str || '';
+
+                return str.slice(0,1).toUpperCase() + str.slice(1);
+            });
+
+            // Grab the template script
+            var theTemplateScript = $("#built-in-helpers-template").html();
+
+            // Compile the template
+            var theTemplate = Handlebars.compile(theTemplateScript);
+
+            // We will call this template on an array of objects
+            var context = {
+                animals:[
+                    {
+                        name: "cow",
+                        noise: "moooo"
+                    },
+                    {
+                        name: "cat",
+                        noise: "meow"
+                    },
+                    {
+                        name: "fish",
+                        noise: ""
+                    },
+                    {
+                        name: "farmer",
+                        noise: "Get off my property!"
+                    }
+                ]
+            };
+
+            // Pass our data to the template
+            var theCompiledHtml = theTemplate(context);
+
+            // Add the compiled html to the page
+            $('.content-placeholder').html(theCompiledHtml);
+        }
+    });
+</script>
